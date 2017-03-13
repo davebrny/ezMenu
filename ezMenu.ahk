@@ -1,10 +1,10 @@
 /*
 [script info]
 version     = 1
-description = easy menu creation using indentation
+description = easy menu creation using indentation and markdown-like syntax
 ahk version = 1.1.24.04
 author      = davebrny
-source      = 
+source      = https://github.com/davebrny/ezMenu
 */
 
 ezMenu_init:
