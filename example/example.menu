@@ -1,0 +1,65 @@
+*.ezMenu
+
+---
+
+sub-menus
+    .indent 1 tab  (or 4 spaces)
+    ---
+    another sub-menu
+        more sub-menu
+            this item is at level 4
+        this item is at level 3
+    this item is at level 2
+    ---
+    .maximum number of levels:  21
+
+
+
+separator
+    .3 hyphens ---
+    ---
+    lines that contain only --- will become separators
+
+
+
+custom labels
+    .exclamation !
+    ---
+    item a ! label_b
+    .if the text after ! is a valid label name, it will be used instead of the default sub-routine,
+    .and exclamation + label name will be removed
+
+
+
+disable
+    .full stop .
+    ---
+    regular text
+    .disabled / greyed out text
+
+
+
+default
+    .asterick *
+    ---
+    *bold text
+    .this can only be used once on each menu/sub-menu
+
+
+
+comment
+    .semi-colon ;
+    ---
+    ; this line wont be added
+    .lines with a comment at the start will be ignored
+
+---
+
+other examples
+    .replace text with variables
+    %a_userName%
+    %a_computerName%
+    %a_appData%
+    ---
+    .highlight text after item is clicked
+    git commit -a -m "[message]"
