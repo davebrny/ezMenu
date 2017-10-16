@@ -1,4 +1,4 @@
-*.ezMenu
+*.ezMenu syntax
 
 ---
 
@@ -25,9 +25,9 @@ separator
 custom labels
     .exclamation !
     ---
-    item a ! label_b
-    .if the text after ! is a valid label name, it will be used instead of the default sub-routine,
-    .and exclamation + label name will be removed
+    item text ! menu_return
+    .if the text after ! is a valid label name, it will be used instead of the default subroutine,
+    .and the exclamation + label name text will be removed
 
 
 
@@ -52,14 +52,3 @@ comment
     ---
     ; this line wont be added
     .lines with a comment at the start will be ignored
-
----
-
-other examples
-    .replace text with variables
-    %a_userName%
-    %a_computerName%
-    %a_appData%
-    ---
-    .highlight text after item is clicked
-    git commit -a -m "[message]"
