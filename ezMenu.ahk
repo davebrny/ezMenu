@@ -1,8 +1,8 @@
 /*
 [script info]
-version     = 1
+version     = 1.1
 description = easy menu creation using indentation and markdown-like syntax
-ahk version = 1.1.24.04
+ahk version = 1.1.26.01
 author      = davebrny
 source      = https://github.com/davebrny/ezMenu
 */
@@ -19,11 +19,8 @@ ezMenu(menu_name, string_or_file, modify_func="") {
 
     goSub, ezMenu_init
 
-    if fileExist(string_or_file) and (subStr(string_or_file, -4, 5) = ".menu")
-        {
-        fileRead, menu_text, % string_or_file
-        stringReplace, menu_text, menu_text, `r`n, `n, all
-        }
+    if fileExist(string_or_file)
+         menu_text := ezMenu_get(string_or_file)
     else menu_text := string_or_file
     if (menu_text = "")
         {
@@ -49,6 +46,22 @@ ezMenu(menu_name, string_or_file, modify_func="") {
 
     menu, % menu_name, show
     menu, % menu_name, delete
+}
+
+
+
+ezMenu_get(filepath) {
+    fileRead, contents, % filepath
+    stringReplace, contents, contents, `r`n, `n, all
+    if (subStr(filepath, -8, 9) = ".menu.ahk")
+        {
+        stringGetPos, pos, contents, [ezMenu], L1
+        stringMid, right_text, contents, pos + 9
+        stringGetPos, pos, right_text, [ezMenu_end], L1
+        stringMid, menu_text, right_text, pos, , L
+        }
+    else menu_text := contents
+    return trim(menu_text, "`n")
 }
 
 
