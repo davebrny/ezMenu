@@ -1,6 +1,6 @@
 /*
 [script info]
-version     = 1.1.1
+version     = 1.2
 description = easy menu creation using indentation and markdown-like syntax
 ahk version = 1.1.26.01
 author      = davebrny
@@ -8,6 +8,8 @@ source      = https://github.com/davebrny/ezMenu
 */
 
 ezMenu_init:
+global default_label
+default_label := ""
 tab_width = 4
 loop, % tab_width
     s_tab .= a_space
@@ -111,8 +113,11 @@ menu_add(menu_name, item_name, menu_level) {
 
     if (menu_level = "")
         menu_level := "1"
+    if (default_label = "")
+        default_label := menu_name
     if (item_label = "")
-        item_label := menu_name
+        item_label := default_label
+
         ;# default menu item
     if (inStr(LTrim(item_name), "*") = 1)
         {
@@ -125,20 +130,37 @@ menu_add(menu_name, item_name, menu_level) {
         stringTrimLeft, item_name, item_name, 1
         disabled_item := true
         }
+
         ;# custom label action
     item_name := LTrim(item_name)
-    if instr(item_name, "!") ;and (disabled_item != true)
+    if instr(item_name, "!")
         {
-        stringGetPos, pos, item_name, !, R1
-        stringMid, custom_label, item_name, pos + 2
-        if isLabel(trim(custom_label))
+        loop, parse, % item_name, !, % a_space
             {
-            item_label := trim(custom_label)
-            stringMid, temp_item, item_name, pos, , L
-            item_name := trim(temp_item)
+            if (a_index = 1)
+                continue
+            first_word := strSplit(a_loopField, a_space)
+            if isLabel(first_word[1])
+                found_label := first_word[1]
             }
+        until (found_label)
+        if (found_label)
+            {
+            item_label := found_label
+            if inStr(item_name, "!" found_label "!")     ; if setting a new global default
+                {
+                default_label := found_label
+                if (inStr(item_name, "!" found_label "!") = 1)   ; if at start, then skip menu add
+                    return
+                item_name := strReplace(item_name, "!" found_label "!", "")
+                }
+            else if inStr(item_name, "!" found_label)    ; if setting a custom label for this line
+                item_name := strReplace(item_name, "!" found_label, "")
+            }
+        item_name := trim(item_name)
         }
 
+        ;# save value for later use
     save_value(item_name, menu_level)
 
         ;# add item to menu

@@ -8,7 +8,7 @@ return ; end of auto-execute
 
 
     ; example of basic yes/no confirmation pop-up
-!1::ezMenu("label_name", ".continue? `n--- `nyes `nno")
+!1::ezMenu("menu_name", ".continue? `n--- `nyes `nno")
 
 
 !2::    ; indentation example
@@ -23,7 +23,7 @@ level 1.2
     level 2.&1    ; underline the character after &&
     level 2.&2
 )
-ezMenu("label_name", example_text)
+ezMenu("indentation", example_text)
 return
 
 
@@ -42,24 +42,43 @@ msgBox, [msg]
 git commit -a -m "[message]"
 )
 ezMenu("send_text", example_text, "menu_mod")
-return
+return    ; the menu name "send_text" is used as the default label
 
 
 
-!4::    ; get menu text from file
-ezMenu("menu_return", a_scriptDir "\example.menu")
-; ezMenu("menu_return", "example.menu", "menu_mod")    ; or use working directory
-return
+!4::    ; custom label names syntax
+example_text = 
+(
+!label_a!    ; set label_a as the default for every item below
+item a1
+             ; set label_b for a single item
+item b1   !label_b
+item a2
+             ; change the default to label_c
+item c1   !label_c!
+item c2
+item c3
+)
+ezMenu("set labels", example_text)
+return    ; this menu name isnt being used as a label so it can have spaces
+
+
+
+!5::    ; get menu text from file
+ezMenu("syntax", "example.menu")                  ; if file is in the working directory
+; ezMenu("syntax", path_to_file "\example.menu")  ; otherwise specify the full path
+return                                            ; file types: .txt | .menu | .menu.ahk
 
 
 ; ------------------------------
 
 
-label_name:
+menu_name:
+indentation:
 item := item_mod(a_thisMenuItem)    ; remove comments and the first &
 if (item = "yes")
-     msgBox, you chose "yes"
-else msgBox, you chose "%item%"
+     msgBox, label:  %a_thisLabel% `n`nyou chose "yes"
+else msgBox, label:  %a_thisLabel% `n`nyou chose "%item%"
 return
 
 
@@ -67,6 +86,13 @@ send_text:
 item := item_mod(a_thisMenuItem)
 send % item
 item_select(item)    ; select brackets
+return
+
+
+label_a:
+label_b:
+label_c:
+msgBox, % a_thisLabel "`n" a_thisMenuItem
 return
 
 

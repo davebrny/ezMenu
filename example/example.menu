@@ -1,3 +1,4 @@
+!menu_return!
 *.ezMenu syntax
 
 ---
@@ -25,9 +26,14 @@ separator
 custom labels
     .exclamation !
     ---
-    item text ! menu_return
-    .if the text after ! is a valid label name, it will be used instead of the default subroutine,
-    .and the exclamation + label name text will be removed
+    item text    !custom_label
+    .if the text after an exclamation is a valid label name, it will be used instead of the default label
+    .(the exclamation + label name text will then be removed)
+    ---
+    item text 2    !default_label!
+    .if there is an exclamation on either side then that label will become the new default for all items below it
+    !default_label!
+    .this can also be used on a line on its own  (see the first line of this file)
 
 
 
