@@ -1,6 +1,6 @@
 /*
 [script info]
-version     = 1.1
+version     = 1.1.1
 description = easy menu creation using indentation and markdown-like syntax
 ahk version = 1.1.26.01
 author      = davebrny
@@ -21,12 +21,9 @@ ezMenu(menu_name, string_or_file, modify_func="") {
 
     if fileExist(string_or_file)
          menu_text := ezMenu_get(string_or_file)
-    else menu_text := string_or_file
+    else menu_text := trim(string_or_file, "`n")
     if (menu_text = "")
-        {
-        msgBox, "%menu_name%" menu is empty
-        exit
-        }
+        error_return(menu_name " menu is empty")
 
     if isFunc(modify_func)
         menu_text := %modify_func%(menu_text)
@@ -55,6 +52,10 @@ ezMenu_get(filepath) {
     stringReplace, contents, contents, `r`n, `n, all
     if (subStr(filepath, -8, 9) = ".menu.ahk")
         {
+        if !inStr(contents, "[ezMenu]")
+            error_return("[ezMenu] not found")
+        else if !inStr(contents, "[ezMenu_end]")
+            error_return("[ezMenu_end] not found")
         stringGetPos, pos, contents, [ezMenu], L1
         stringMid, right_text, contents, pos + 9
         stringGetPos, pos, right_text, [ezMenu_end], L1
@@ -62,6 +63,13 @@ ezMenu_get(filepath) {
         }
     else menu_text := contents
     return trim(menu_text, "`n")
+}
+
+
+
+error_return(msg) {
+    msgBox, % msg
+    exit
 }
 
 
@@ -84,16 +92,15 @@ error_check(line_text, level, line_number) {
 
     if (line_number = 1)
         last_level := "0"
+
     if (level > 21)
-        {
-        msgBox, Error on line %line_number% `n"%line_text%" `n`nMaximum levels allowed: 21
-        exit
-        }
+        error_return("Error on menu line " line_number " `n" line_text " `n`n"
+            . "Maximum levels allowed: 21")
+    
     if (level > last_level) and (level > last_level + 1)
-        {
-        msgBox, Error on line %line_number% `n"%line_text%" `n`nItem has no parent menu
-        exit
-        }
+        error_return("Error on menu line " line_number " `n" line_text " `n`n"
+            . "Item has no parent menu")
+
     last_level := level
 }
 
