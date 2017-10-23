@@ -25,6 +25,9 @@ ezMenu(menu_name, string_or_file, modify_func="") {
     if (menu_text = "")
         error_return("""" menu_name """ menu is empty")
 
+    if !inStr(menu_text, "`n") and inStr(menu_text, "|") 
+        stringReplace, menu_text, menu_text, |, `n, all
+
     if isFunc(modify_func)
         menu_text := %modify_func%(menu_text)
 

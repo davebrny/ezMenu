@@ -10,6 +10,10 @@ return ; end of auto-execute
     ; example of basic yes/no confirmation pop-up
 !1::ezMenu("menu_name", ".continue? `n--- `nyes `nno")
 
+    ; if the menu text contains only 1 line then | can be used for better readability
+; !1::ezMenu("menu_name", ".continue? | --- | yes | no")
+
+
 
 !2::    ; indentation example
 example_text = 
