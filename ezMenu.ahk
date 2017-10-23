@@ -1,6 +1,6 @@
 /*
 [script info]
-version     = 1.2
+version     = 1.2.1
 description = easy menu creation using indentation and markdown-like syntax
 ahk version = 1.1.26.01
 author      = davebrny
@@ -8,7 +8,7 @@ source      = https://github.com/davebrny/ezMenu
 */
 
 ezMenu_init:
-global default_label
+global menu_created, default_label, default_item, disabled_item, tab_width, s_tab
 default_label := ""
 tab_width = 4
 loop, % tab_width
@@ -17,22 +17,20 @@ return
 
 
 ezMenu(menu_name, string_or_file, modify_func="") {
-    global menu_created
-
     goSub, ezMenu_init
 
     if fileExist(string_or_file)
          menu_text := ezMenu_get(string_or_file)
     else menu_text := trim(string_or_file, "`n")
     if (menu_text = "")
-        error_return(menu_name " menu is empty")
+        error_return("""" menu_name """ menu is empty")
 
     if isFunc(modify_func)
         menu_text := %modify_func%(menu_text)
 
     loop, parse, menu_text, `n, `r
         {
-        if a_loopfield is Space
+        if a_loopfield is space
             continue    ; if whitespace or empty
         if (inStr(LTrim(a_loopfield), ";") = 1)
             continue    ; if commented
@@ -77,8 +75,6 @@ error_return(msg) {
 
 
 menu_level(byRef line_text, byRef level) {
-    global tab_width, s_tab
-
     line_text   := rTrim(line_text)
     line_text   := strReplace(line_text, a_tab, s_tab)   ; replace tabs with spaces
     replaced    := line_text
@@ -98,7 +94,7 @@ error_check(line_text, level, line_number) {
     if (level > 21)
         error_return("Error on menu line " line_number " `n" line_text " `n`n"
             . "Maximum levels allowed: 21")
-    
+
     if (level > last_level) and (level > last_level + 1)
         error_return("Error on menu line " line_number " `n" line_text " `n`n"
             . "Item has no parent menu")
@@ -109,14 +105,11 @@ error_check(line_text, level, line_number) {
 
 
 menu_add(menu_name, item_name, menu_level) {
-    global menu_created, default_item, disabled_item
-
     if (menu_level = "")
         menu_level := "1"
     if (default_label = "")
         default_label := menu_name
-    if (item_label = "")
-        item_label := default_label
+    item_label := default_label
 
         ;# default menu item
     if (inStr(LTrim(item_name), "*") = 1)
@@ -211,8 +204,6 @@ stored_value(name) {
 
 
 menu(menu, item="", action="") {
-    global default_item, disabled_item
-
     menu, % menu, add, % item, % action
     if (disabled_item = true)
         menu, % menu, disable, % item
